@@ -75,5 +75,7 @@ Written by Larry Holder (holder@wsu.edu).
 
 The Python version of this simulator project was written for the CPE 480 class in Artificial Intelligence at Cal Poly, San Luis Obispo, CA to replace the C++ implementation.
 
-## Future Work ## 
+## Future Work and Known Issues ## 
 Currently this version of the simulator does not support importing a predefined world from a text file like the original verson of the wumpus simulator. All the worlds will have to be randomly generated.
+
+Version 1.0 only supports Python 2.7
