@@ -18,7 +18,7 @@ import random
 
 
 # The version of the wumpus simulator
-WUMPSIM_VERSION = "2.9"
+WUMPSIM_VERSION = "v1.0"
 
 # The size of the world, which will be a square
 WORLD_SIZE = 4
