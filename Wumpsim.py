@@ -9,6 +9,8 @@
 # Professor Daniel Kauffman
 # Cal Poly, San Luis Obispo
 #
+# https://github.com/erikphillips/wumpus_world
+#
 
 
 from Action import *
@@ -18,7 +20,7 @@ import random
 
 
 # The version of the wumpus simulator
-WUMPSIM_VERSION = "v1.0"
+WUMPSIM_VERSION = "v1.1"
 
 # The size of the world, which will be a square
 WORLD_SIZE = 4
