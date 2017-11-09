@@ -321,13 +321,13 @@ class WumpusWorld(object):
     def print_world(self):
         """ print_world: print the current wumpus world"""
 
-        print "World size = {}x{}".format(WORLD_SIZE, WORLD_SIZE)
+        print("World size = {}x{}".format(WORLD_SIZE, WORLD_SIZE))
 
         # print out the first horizontal line
         out = "+"
         for x in range(1, WORLD_SIZE + 1):
             out += "---+"
-        print out
+        print(out)
 
         for y in range(WORLD_SIZE, 0, -1):  # print starting from the 'bottom' up
 
@@ -359,7 +359,7 @@ class WumpusWorld(object):
 
                 out += "|"
 
-            print out
+            print(out)
 
             # print out the second row, containing the agent
             out = "|"
@@ -377,29 +377,29 @@ class WumpusWorld(object):
                 else:
                     out += "   |"
 
-            print out
+            print(out)
             out = "+"
 
             # print out the final horizontal line
             for x in range(1, WORLD_SIZE + 1):
                 out += "---+"
 
-            print out
+            print(out)
 
         # print the current percepts for the agent's location
-        print "Current percept = [stench={},breeze={},glitter={},bump={},scream={}]".format(
+        print("Current percept = [stench={},breeze={},glitter={},bump={},scream={}]".format(
             self.current_percept.stench,
             self.current_percept.breeze,
             self.current_percept.glitter,
             self.current_percept.bump,
-            self.current_percept.scream)
+            self.current_percept.scream))
 
-        print "Agent has gold = {}, agent has arrow = {}".format(
+        print("Agent has gold = {}, agent has arrow = {}".format(
             self.current_state.agent_has_gold,
-            self.current_state.agent_has_arrow)
+            self.current_state.agent_has_arrow))
 
-        print "Current score = {}".format(self.get_score())
-        print
+        print("Current score = {}".format(self.get_score()))
+        print()
 
 
 class Agent(object):
@@ -451,7 +451,7 @@ def main(args):
               iterates over each trial, creating a new wumpus world
               then allows for the given number of tries for that world """
 
-    print "Welcome to the Python Wumpus World Simulator v{} by Erik Phillips.  Happy Hunting!\n".format(WUMPSIM_VERSION)
+    print("Welcome to the Python Wumpus World Simulator v{} by Erik Phillips. Happy Hunting!\n".format(WUMPSIM_VERSION))
 
     total_score = 0
 
@@ -471,16 +471,16 @@ def main(args):
 
             num_moves = 0
 
-            print "Trial {}, Try {} begin".format(trials, tries)
-            print
+            print("Trial {}, Try {} begin".format(trials, tries))
+            print()
 
             while (not wumpus_world.game_over()) and (num_moves < MAX_MOVES_PER_GAME):
                 wumpus_world.print_world()
                 percept = wumpus_world.get_percept()  # get the percepts for the current location
                 action = Agent.process(percept)  # and pass the percepts to the imported agent, expecting an action
 
-                print "Action = {}".format(action_to_string(action))
-                print
+                print("Action = {}".format(action_to_string(action)))
+                print()
 
                 wumpus_world.execute_action(action)  # execute the action in the wumpus world
                 num_moves += 1
@@ -489,21 +489,21 @@ def main(args):
             Agent.game_over(score)  # and pass that score to the imported agent, signaling game over
             trial_score += score
 
-            print "Trial {}, Try {} complete: score = {}\n".format(trials, tries, score)
+            print("Trial {}, Try {} complete: score = {}\n".format(trials, tries, score))
 
         Agent.destructor()  # call the deconstructor on the imported agent for this trial is over
         average_score = trial_score / args.tries
         total_score += trial_score
 
-        print "Trial {} complete: Average score for trial = {}, total score for trial = {}\n".format(trials,
+        print("Trial {} complete: Average score for trial = {}, total score for trial = {}\n".format(trials,
                                                                                                      average_score,
-                                                                                                     trial_score)
+                                                                                                     trial_score))
 
     average_score = total_score / (args.trials * args.tries)
-    print "All trials completed: Average score for all trials = {}, " \
-          "Total score for all trials = {}".format(average_score, total_score)
-    print "Thanks for playing!"
-    print
+    print("All trials completed: Average score for all trials = {}, " \
+          "Total score for all trials = {}".format(average_score, total_score))
+    print("Thanks for playing!")
+    print()
 
 
 if __name__ == '__main__':

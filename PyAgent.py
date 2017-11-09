@@ -6,17 +6,17 @@ import Orientation
 
 def PyAgent_Constructor():
     """ PyAgent_Constructor: called at the start of a new trial """
-    print "PyAgent_Constructor"
+    print("PyAgent_Constructor")
 
 
 def PyAgent_Destructor():
     """ PyAgent_Destructor: called after all tries for a trial are complete """
-    print "PyAgent_Destructor"
+    print("PyAgent_Destructor")
 
 
 def PyAgent_Initialize():
     """ PyAgent_Initialize: called at the start of a new try """
-    print "PyAgent_Initialize"
+    print("PyAgent_Initialize")
 
 
 def PyAgent_Process(stench, breeze, glitter, bump, scream):
@@ -44,12 +44,11 @@ def PyAgent_Process(stench, breeze, glitter, bump, scream):
     else:
         percept_str += "Scream=False"
     
-    print "PyAgent_Process: " + percept_str
+    print("PyAgent_Process: " + percept_str)
 
     return Action.GOFORWARD
 
 
 def PyAgent_GameOver(score):
     """ PyAgent_GameOver: called at the end of each try """
-    print "PyAgent_GameOver: score = " + str(score)
-
+    print("PyAgent_GameOver: score = " + str(score))
