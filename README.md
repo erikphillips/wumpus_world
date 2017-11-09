@@ -78,4 +78,5 @@ The Python version of this simulator project was written for the CPE 480 class i
 ## Future Work and Known Issues ## 
 Currently this version of the simulator does not support importing a predefined world from a text file like the original verson of the wumpus simulator. All the worlds will have to be randomly generated.
 
-Version 1.0 only supports Python 2.7
+- Version 1.0 only supports Python 2.7
+- Version 1.1 now supports Python 3 (print statements were updated in the driver)
