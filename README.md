@@ -40,7 +40,7 @@ the six actions defined in the `Action.py` file.
 
 Once you've finished your `PyAgent.py` file, simply run the `python Wumpsim.py` program
 to test your agent. The `PyAgent.py` file and the `Wumpsim.py` script must be
-in the same directory. The `Wumpsim.py` program accepts all the options
+in the same directory. The `Wumpsim.py` program accepts all the simulator options
 described described below.
 
 ### Simulator Options ### 
@@ -62,6 +62,15 @@ Optional Arguments:
     The seed to specify to the random number generator. Specifying a seed 
     allows for the simulator to run the same random worlds.
     Default is None which uses a random component from the system time.
+    
+  -world WORLD
+    The world file to as a pre-defined wumpus world. The file must follow a
+    specified format (example is 'testworld.txt'):
+      size N      # the size of the world (integer)
+      wumpus X Y  # the (x,y) location of the wumpus (integers)
+      gold X Y    # the (x,y) location of the gold (integers)
+      pit X Y     # the (x,y) location of a pit (integers)
+                  # subsequent lines may include additional pit locations
 ```
 
 ## Acknowledgments ##
@@ -76,7 +85,9 @@ Written by Larry Holder (holder@wsu.edu).
 The Python version of this simulator project was written for the CPE 480 class in Artificial Intelligence at Cal Poly, San Luis Obispo, CA to replace the C++ implementation.
 
 ## Future Work and Known Issues ## 
-Currently this version of the simulator does not support importing a predefined world from a text file like the original verson of the wumpus simulator. All the worlds will have to be randomly generated.
+~~Currently this version of the simulator does not support importing a predefined world from a text file like the original verson of the wumpus simulator. All the worlds will have to be randomly generated.~~
 
+## Changelog and Version History
 - Version 1.0 only supports Python 2.7
 - Version 1.1 now supports Python 3 (print statements were updated in the driver)
+- Version 1.2 now supports loading pre-defined worlds
