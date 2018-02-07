@@ -17,10 +17,11 @@ from Action import *
 from Orientation import *
 import PyAgent
 import random
+import sys
 
 
 # The version of the wumpus simulator
-WUMPSIM_VERSION = "v1.1"
+WUMPSIM_VERSION = "v1.2"
 
 # The size of the world, which will be a square
 WORLD_SIZE = 4
@@ -53,11 +54,18 @@ class Percept(object):
 class State(object):
     """ State: holds the information on the current state of the game """
 
-    def __init__(self):
+    def __init__(self, file_information):
         """ __init__: create a new state for the wumpus world, setting locations for wumpus, pits, and gold """
-        self.wumpus_location = self._get_wumpus_location()
-        self.gold_location = self._get_gold_location()
-        self.pit_locations = self._get_pit_locations()
+
+        # If there is file information, then use that, otherwise setup randomly
+        if file_information is None:
+            self.wumpus_location = self._get_wumpus_location()
+            self.gold_location = self._get_gold_location()
+            self.pit_locations = self._get_pit_locations()
+        else:
+            self.wumpus_location = file_information.wumpus_location
+            self.gold_location = file_information.gold_location
+            self.pit_locations = file_information.pit_locations
 
         self.agent_location = Location(1, 1)
         self.agent_orientation = RIGHT
@@ -141,12 +149,12 @@ class Location(object):
 
 
 class WumpusWorld(object):
-    def __init__(self):
+    def __init__(self, file_information=None):
         """ __init__: create a new wumpus world, randomly placing the wumpus and the gold, and multiple pits """
         self.num_actions = 0
 
         # Update the current state
-        self.current_state = State()
+        self.current_state = State(file_information=file_information)
 
         # Update current percepts
         self.current_percept = Percept()
@@ -404,6 +412,92 @@ class WumpusWorld(object):
         print()
 
 
+class WumpusWorldFileInformation(object):
+    def __init__(self, filename):
+        self.world_size = WORLD_SIZE
+        self.wumpus_location = None
+        self.gold_location = None
+        self.pit_locations = []
+
+        with open(filename, "r") as infile:
+            lines = infile.readlines()
+
+            if len(lines) < 3:  # there must be at least 3 lines for size, wumpus, and gold
+                print("Invalid world file; required: size, wumpus, and gold locations.")
+                sys.exit(1)
+
+            self._process_size(lines[0])
+            self._process_wumpus(lines[1])
+            self._process_gold(lines[2])
+
+            if len(lines) > 3:  # only process the pits (optional) if there are more lines
+                self._process_pits(lines[3:])
+
+    def _process_size(self, line):
+        global WORLD_SIZE  # if the size of the map is different than 4, then the world size will need updating.
+
+        size_tokens = line.strip().split(" ")
+        if len(size_tokens) != 2 or size_tokens[0] != "size":
+            print("Incorrect token in world file '{}', expected 'size'".format(size_tokens[0]))
+            sys.exit(1)
+
+        self.world_size = int(size_tokens[1])
+        if self.world_size < 2:
+            print("Invalid world size, size < 2.")
+            sys.exit(1)
+
+        WORLD_SIZE = self.world_size  # update the global world size
+
+    def _process_wumpus(self, line):
+        tokens = line.strip().split(" ")
+        if len(tokens) != 3 or tokens[0] != "wumpus":
+            print("Incorrect token in world file '{}', expected 'wumpus'".format(tokens[0]))
+            sys.exit(1)
+
+        loc_x = int(tokens[1])
+        loc_y = int(tokens[2])
+
+        if (1 > loc_x > self.world_size) or (1 > loc_y > self.world_size) or (loc_x == 1 and loc_y == 1):
+            print("Bad wumpus location in world file for location ({}, {}).".format(loc_x, loc_y))
+            sys.exit(1)
+
+        # Create a new location object and set it to the wumpus location
+        self.wumpus_location = Location(loc_x, loc_y)
+
+    def _process_gold(self, line):
+        tokens = line.strip().split(" ")
+        if len(tokens) != 3 or tokens[0] != "gold":
+            print("Incorrect token in world file '{}', expected 'gold'".format(tokens[0]))
+            sys.exit(1)
+
+        loc_x = int(tokens[1])
+        loc_y = int(tokens[2])
+
+        if (1 > loc_x > self.world_size) or (1 > loc_y > self.world_size) or (loc_x == 1 and loc_y == 1):
+            print("Bad gold location in world file for location ({}, {}).".format(loc_x, loc_y))
+            sys.exit(1)
+
+        # Create a new location object and set it to the gold location
+        self.gold_location = Location(loc_x, loc_y)
+
+    def _process_pits(self, lines):
+        for line in lines:
+            tokens = line.strip().split(" ")
+            if len(tokens) != 3 or tokens[0] != "pit":
+                print("Incorrect token in world file '{}', expected 'pit'".format(tokens[0]))
+                sys.exit(1)
+
+            loc_x = int(tokens[1])
+            loc_y = int(tokens[2])
+
+            if (1 > loc_x > self.world_size) or (1 > loc_y > self.world_size) or (loc_x == 1 and loc_y == 1):
+                print("Bad pit location in world file for location ({}, {}).".format(loc_x, loc_y))
+                sys.exit(1)
+
+            # Create a new location object and append it to the pit locations
+            self.pit_locations.append(Location(loc_x, loc_y))
+
+
 class Agent(object):
     @staticmethod
     def construct():
@@ -453,7 +547,7 @@ def main(args):
               iterates over each trial, creating a new wumpus world
               then allows for the given number of tries for that world """
 
-    print("Welcome to the Python Wumpus World Simulator v{} by Erik Phillips. Happy Hunting!\n".format(WUMPSIM_VERSION))
+    print("Welcome to the Python Wumpus World Simulator {} by Erik Phillips. Happy Hunting!\n".format(WUMPSIM_VERSION))
 
     total_score = 0
 
@@ -462,7 +556,11 @@ def main(args):
     random.seed(args.seed)
 
     for trials in range(1, args.trials + 1):
-        wumpus_world = WumpusWorld()  # init a new wumpus world
+        file_information = None
+        if args.world is not None:
+            file_information = WumpusWorldFileInformation(args.world)
+
+        wumpus_world = WumpusWorld(file_information=file_information)  # init a new wumpus world
         Agent.construct()  # call the constructor on the imported agent
 
         trial_score = 0
@@ -507,6 +605,9 @@ def main(args):
     print("Thanks for playing!")
     print()
 
+    # Return the average_score and the total_score
+    return average_score, total_score
+
 
 if __name__ == '__main__':
     import argparse
@@ -515,6 +616,7 @@ if __name__ == '__main__':
     parser.add_argument('-tries', type=int, default=1)
     parser.add_argument('-trials', type=int, default=1)
     parser.add_argument('-seed', type=int)
+    parser.add_argument('-world', type=str)
     args = parser.parse_args()
 
     if args.tries <= 0:
